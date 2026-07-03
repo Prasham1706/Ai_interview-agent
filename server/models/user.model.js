@@ -1,18 +1,14 @@
 // this file is for defining the user model for the MongoDB database using Mongoose. A model is a representation of a collection in the database and defines the structure of the documents in that collection.user name , user authhentication, credits ena mate use thai
-import mongoose from mongoose;
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
     name : {
-        type:string,
+        type:String,
         required:true
     },
     email : {
         type:String,
         unique:true,
-        required:true
-    },
-    passeord : {// mari rite add krelu che 
-        type:String,
         required:true
     },
     credits : {
