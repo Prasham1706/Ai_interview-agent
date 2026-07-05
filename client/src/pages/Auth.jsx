@@ -1,10 +1,9 @@
-import React from "react";
 import { motion } from "motion/react";
 import { RiArticleFill } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
-import { linkWithCredential, signInWithPopup } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../utils/firebase";
-import { ServerUrl } from "../App";
+import { ServerUrl } from "../config/api";
 import axios from "axios";
 function Auth() {
 
