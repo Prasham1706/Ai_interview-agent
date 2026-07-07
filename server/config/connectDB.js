@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
+import config from "./app.config.js";
+import logger from "../utils/logger.js";
 
 const connectDB = async () => {
-    if (!process.env.MONGODB_URL) {
-        throw new Error("MONGODB_URL is not configured")
-    }
-
     try {
-        await mongoose.connect(process.env.MONGODB_URL)
-        console.log("MongoDB connected successfully")
+        await mongoose.connect(config.mongo.url, {
+            autoIndex: !config.isProduction,
+        })
+        logger.info("MongoDB connected successfully")
     } catch (error) {
-        console.log(`Error connecting to MongoDB : ${error.message}`)
+        logger.error("Error connecting to MongoDB", { message: error.message })
         throw error
     }
 }

@@ -1,28 +1,20 @@
-import jwt from "jsonwebtoken"
+import config from "../config/app.config.js";
+import AppError from "../utils/AppError.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { verifyAccessToken } from "../utils/token.js";
 
-const isAuth = async (req, res, next) => {
-    try {
-        const { token } = req.cookies
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: "Authentication token is required"
-            })
-        }
+const isAuth = asyncHandler(async (req, res, next) => {
+    const token = req.cookies?.[config.jwt.accessCookieName] || req.cookies?.token;
 
-        const verifyToken = jwt.verify(token, process.env.JWT_SECRET)
-
-        req.userId = verifyToken.userId
-        req.userRole = verifyToken.role
-        next()
-    } catch (error) {
-        const isTokenError = error.name === "JsonWebTokenError" || error.name === "TokenExpiredError"
-
-        return res.status(isTokenError ? 401 : 500).json({
-            success: false,
-            message: isTokenError ? "Invalid or expired authentication token" : `Auth error: ${error.message}`
-        })
+    if (!token) {
+        throw new AppError("Authentication token is required", 401, "AUTH_TOKEN_REQUIRED");
     }
-}
+
+    const payload = verifyAccessToken(token);
+
+    req.userId = payload.userId;
+    req.userRole = payload.role;
+    next();
+});
 
 export default isAuth

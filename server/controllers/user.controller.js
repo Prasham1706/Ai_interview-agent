@@ -1,24 +1,14 @@
-import User from "../models/user.model.js"
+import User from "../models/user.model.js";
+import AppError from "../utils/AppError.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { sendSuccess } from "../utils/apiResponse.js";
 
-export const getCurrentUser = async (req, res) => {
-    try {
-        const user = await User.findById(req.userId).select("-__v");
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            });
-        }
+export const getCurrentUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.userId);
 
-        return res.status(200).json({
-            success: true,
-            user
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        });
+    if (!user) {
+        throw new AppError("User not found", 404, "USER_NOT_FOUND");
     }
-}
+
+    return sendSuccess(res, 200, { user });
+});
